@@ -13,6 +13,9 @@ class ErrorCode(StrEnum):
     PROJECT_NOT_FOUND = "project_not_found"
     PROJECT_ALREADY_IMPORTED = "project_already_imported"
     NOTHING_TO_IMPORT = "nothing_to_import"
+    BUDGET_EXCEEDED = "budget_exceeded"
+    LEDGER_ENTRY_NOT_FOUND = "ledger_entry_not_found"
+    LEDGER_LOCKED = "ledger_locked"
 
 
 class ServiceError(Exception):
@@ -43,3 +46,17 @@ class ProjectAlreadyImported(ServiceError):
 
 class NothingToImport(ServiceError):
     code = ErrorCode.NOTHING_TO_IMPORT
+
+
+class BudgetExceeded(ServiceError):
+    code = ErrorCode.BUDGET_EXCEEDED
+
+
+class LedgerEntryNotFound(ServiceError):
+    code = ErrorCode.LEDGER_ENTRY_NOT_FOUND
+
+
+class LedgerLocked(ServiceError):
+    """The budget row lock could not be taken in time; the caller may retry later."""
+
+    code = ErrorCode.LEDGER_LOCKED

@@ -94,6 +94,8 @@ Checked against `docs/ARCHITECTURE.md`, `docs/REQUIREMENTS.md` and `apps/api/src
   `normalized_alignment` longer than the input does not change the cost). No minimum charge,
   no format multiplier, `eleven_v3` costs the same as v2 per character.
 - `character-cost` and `request-id` headers are present on the 200 response as documented.
+- `request-id` values seen live are 20 characters (e.g. base62), `x-trace-id` 32 hex characters;
+  `request_id` columns are `String(64)` with that margin.
 - **Subscription counter is not immediately consistent**: `character_count` went from 1 to 0
   while 390 characters were billed. See impact point 12.
 - **Subscription counter lag confirmed on the second run**: `used=390` before and after another

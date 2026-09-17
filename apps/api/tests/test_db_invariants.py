@@ -11,13 +11,37 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from retake.db.models import LedgerEntry, LedgerKind, Project, Segment, Take, TakeStatus
+from retake.db.models import (
+    BudgetPeriod,
+    LedgerEntry,
+    LedgerKind,
+    Project,
+    Segment,
+    Take,
+    TakeStatus,
+)
+
+PERIOD = "2099-01"
 
 # The `session` fixture (savepoint per test) lives in tests/conftest.py.
 
 
 def _project() -> Project:
     return Project(title="Test chapter", voice_id="voice", model_id="eleven_multilingual_v2")
+
+
+def _entry(
+    project: Project, *, key: str, credits: int = 0, take: Take | None = None
+) -> LedgerEntry:
+    return LedgerEntry(
+        project=project,
+        take=take,
+        kind=LedgerKind.TTS,
+        period=PERIOD,
+        estimated_credits=credits,
+        credits=credits,
+        idempotency_key=key,
+    )
 
 
 def _segment(project: Project, position: int = 0) -> Segment:
@@ -39,12 +63,8 @@ def _take(segment: Segment, *, attempt: int, status: TakeStatus, active: bool) -
 async def test_ledger_rejects_duplicate_idempotency_key(session: AsyncSession) -> None:
     project = _project()
     key = f"tts:{uuid.uuid4()}:1:1"
-    session.add_all(
-        [
-            LedgerEntry(project=project, kind=LedgerKind.TTS, credits=12, idempotency_key=key),
-            LedgerEntry(project=project, kind=LedgerKind.TTS, credits=12, idempotency_key=key),
-        ]
-    )
+    session.add(BudgetPeriod(period=PERIOD))
+    session.add_all([_entry(project, key=key, credits=12), _entry(project, key=key, credits=12)])
 
     with pytest.raises(IntegrityError, match="uq_ledger_entries_idempotency_key"):
         await session.flush()
@@ -86,13 +106,8 @@ async def test_same_attempt_cannot_be_inserted_twice(session: AsyncSession) -> N
 async def test_deleting_a_take_keeps_its_ledger_entry(session: AsyncSession) -> None:
     project = _project()
     take = _take(_segment(project), attempt=1, status=TakeStatus.DONE, active=False)
-    entry = LedgerEntry(
-        project=project,
-        take=None,
-        kind=LedgerKind.TTS,
-        credits=7,
-        idempotency_key=str(uuid.uuid4()),
-    )
+    entry = _entry(project, key=str(uuid.uuid4()), credits=7)
+    session.add(BudgetPeriod(period=PERIOD))
     session.add_all([take, entry])
     await session.flush()
     entry.take_id = take.id

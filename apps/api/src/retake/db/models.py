@@ -89,6 +89,13 @@ class LedgerKind(StrEnum):
     RETRY_SKIPPED = "retry_skipped"
 
 
+class LedgerStatus(StrEnum):
+    PENDING = "pending"  # reserved before the API call, counts at the estimate
+    DONE = "done"  # settled with the reported cost
+    POSSIBLY_BILLED = "possibly_billed"  # sent, no response; counts at the estimate
+    FAILED = "failed"  # nothing billed, counts zero
+
+
 # ---------------------------------------------------------------- tables
 
 
@@ -175,6 +182,8 @@ class Take(Base):
         server_default=TakeStatus.PENDING.value,
     )
     audio_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # ElevenLabs `request-id` header of the generation, for support and reconciliation.
+    request_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     # Denormalised cache of the matching ledger_entries.credits. The ledger is the source of
     # truth; this column exists so the review UI can show cost per take without a join.
@@ -229,6 +238,18 @@ class Finding(Base):
     take: Mapped[Take] = relationship(back_populates="findings")
 
 
+class BudgetPeriod(Base):
+    """One row per billing period (`YYYY-MM`). Exists to be locked: `reserve()` takes
+    `SELECT ... FOR UPDATE` on it so budget check and insert are serialised per period."""
+
+    __tablename__ = "budget_periods"
+
+    period: Mapped[str] = mapped_column(String(7), primary_key=True)  # "2026-09"
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, server_default=func.now()
+    )
+
+
 class LedgerEntry(Base):
     """Source of truth for credits spent. Every ElevenLabs call writes one row (hard rule 2).
 
@@ -239,7 +260,9 @@ class LedgerEntry(Base):
     __tablename__ = "ledger_entries"
     __table_args__ = (
         CheckConstraint("credits >= 0", name="credits_nonnegative"),
+        CheckConstraint("estimated_credits >= 0", name="estimated_credits_nonnegative"),
         Index("ix_ledger_entries_project_id_created_at", "project_id", "created_at"),
+        Index("ix_ledger_entries_period_status", "period", "status"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -251,7 +274,23 @@ class LedgerEntry(Base):
         ForeignKey("takes.id", ondelete="SET NULL"), nullable=True
     )
     kind: Mapped[LedgerKind] = mapped_column(_text_enum(LedgerKind, "ledger_kind"), nullable=False)
+    period: Mapped[str] = mapped_column(
+        ForeignKey("budget_periods.period", ondelete="RESTRICT"), nullable=False
+    )
+    status: Mapped[LedgerStatus] = mapped_column(
+        _text_enum(LedgerStatus, "ledger_status"),
+        nullable=False,
+        default=LedgerStatus.PENDING,
+        server_default=LedgerStatus.PENDING.value,
+    )
+    # What we expected to pay (len(text)); kept next to the reported cost for comparison.
+    estimated_credits: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    # What the API reported (`character-cost`), or the estimate for possibly_billed.
     credits: Mapped[int] = mapped_column(Integer, nullable=False)  # integer, hard rule 7
+    request_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    failure_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
     idempotency_key: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow, server_default=func.now()

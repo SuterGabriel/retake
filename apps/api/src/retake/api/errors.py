@@ -13,6 +13,11 @@ STATUS_BY_CODE: dict[ErrorCode, int] = {
     ErrorCode.PROJECT_NOT_FOUND: status.HTTP_404_NOT_FOUND,
     ErrorCode.PROJECT_ALREADY_IMPORTED: status.HTTP_409_CONFLICT,
     ErrorCode.NOTHING_TO_IMPORT: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    # 402 for the local budget cap on purpose: the client distinguishes it from ElevenLabs'
+    # own 402 by `code` (budget_exceeded vs paid_plan_required).
+    ErrorCode.BUDGET_EXCEEDED: status.HTTP_402_PAYMENT_REQUIRED,
+    ErrorCode.LEDGER_ENTRY_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+    ErrorCode.LEDGER_LOCKED: status.HTTP_503_SERVICE_UNAVAILABLE,
 }
 
 
