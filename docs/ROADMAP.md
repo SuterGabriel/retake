@@ -26,7 +26,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 - [ ] arq worker, `generate_take` job, concurrency limit, idempotent retries
 - [ ] SSE endpoint publishing progress from Redis
 - [ ] Worker integration tests against real Redis
-- [ ] ADR-0003 SSE vs WebSockets
+- [ ] ADR-0004 SSE vs WebSockets
 - Learn: arq, Redis pub/sub, idempotency keys, asyncio semantics vs Promises
 
 ## Week 4 — Detection
@@ -56,7 +56,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 ## Week 8 — Export (known to be tight; spike ffmpeg in week 7 if time allows)
 - [ ] Spike: ffmpeg concat + acrossfade + loudnorm on two takes by hand; note sample-rate handling
 - [ ] Export job (subprocess via `asyncio.create_subprocess_exec`), download
-- [ ] ADR-0004 object storage, ADR-0006 deployment platform
+- [ ] ADR-0005 object storage, ADR-0007 deployment platform
 - Learn: subprocess handling, audio basics (LUFS, crossfade)
 
 ## Week 9 — Hardening & deploy

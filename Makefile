@@ -9,7 +9,7 @@ down:
 test: api-test web-test
 
 api-test:
-	cd apps/api && uv run pytest
+	cd apps/api && uv run alembic upgrade head && uv run pytest
 
 web-test:
 	cd apps/web && npm test -- --run

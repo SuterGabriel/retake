@@ -38,11 +38,12 @@ Dependency direction: `api` → `services` → `domain`; `services` → `integra
 |---|---|
 | `projects` | id, title, voice_id, model_id, voice_settings (json), created_at |
 | `segments` | id, project_id, position, paragraph_index, text, normalized_text, version |
-| `takes` | id, segment_id, segment_version, audio_key, duration_ms, status (pending/generating/done/failed), credits, is_active, created_at |
+| `takes` | id, segment_id, segment_version, attempt, audio_key, duration_ms, status (pending/generating/done/failed), credits (cache; ledger is the source of truth), is_active, created_at |
 | `findings` | id, take_id, type, start_ms, end_ms, confidence, details (json), status (open/fixed/ignored) |
 | `ledger_entries` | id, project_id, take_id (nullable), kind (tts/stt/retry-skipped), credits (int), idempotency_key (unique), created_at |
 
 Invariants: exactly one active take per segment once any take is done; `ledger_entries.idempotency_key` = `f"{kind}:{segment_id}:{segment_version}:{attempt}"`.
+In the database: partial unique index `ux_takes_one_active` (at most one), CHECK `active_requires_done` (only a finished take), UNIQUE `idempotency_key`; "at least one active once any is done" is enforced by the service. Enums are text + CHECK, ids uuid4 (ADR-0003).
 
 ## Pipeline
 
@@ -95,4 +96,4 @@ FastAPI is the only API. Next.js provides routing, layouts and the production se
 - Budget check in `LedgerService.reserve()` before enqueueing generation.
 
 ## Decisions requiring an ADR (see docs/adr/)
-0001 arq vs Celery · 0002 Next.js over Vite · 0003 SSE vs WebSockets · 0004 object storage vs DB blobs · 0005 sentence-level segmentation granularity · 0006 deployment platform
+0001 arq vs Celery · 0002 Next.js over Vite · 0003 text enums and uuid ids · 0004 SSE vs WebSockets · 0005 object storage vs DB blobs · 0006 sentence-level segmentation granularity · 0007 deployment platform

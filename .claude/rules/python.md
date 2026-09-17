@@ -6,6 +6,7 @@ paths:
 # Python backend rules
 
 - Python 3.12 syntax; type hints on every public function. `mypy --strict` must pass.
+- Run Python commands through `uv run` (`uv run pytest`, `uv run alembic`, `uv run python`), never a bare `python` or `pytest`: an Anaconda Python is on this machine's PATH and silently wins otherwise.
 - Pydantic models for API schemas, dataclasses for domain objects, SQLAlchemy models for persistence. Never one class for all three.
 - Async only where there is I/O. Domain logic stays synchronous.
 - Never share one `AsyncSession` across concurrent tasks. Session lifetime = one request or one job.
