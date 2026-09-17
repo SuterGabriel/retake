@@ -47,7 +47,7 @@ In the database: partial unique index `ux_takes_one_active` (at most one), CHECK
 
 ## Pipeline
 
-1. **Import** → `domain.segmentation.split(text) -> list[SegmentDraft]`
+1. **Import** → `domain.segmentation.split(text) -> list[SegmentDraft]` (pysbd behind one function, ADR-0004; `//` lines are comments)
 2. **Generate** → for each segment enqueue `generate_take(segment_id, version)`; worker calls TTS adapter, stores audio, writes Take + LedgerEntry, then enqueues `analyze_take(take_id)`.
 3. **Analyze** → Scribe transcript → `domain.normalize` both sides → `domain.diff.align(expected, actual)` → `domain.findings.from_alignment(...)` + `domain.audio_checks` (silence, truncation) → persist Findings.
 4. **Retake** → new segment version? No: same text, new Take with `attempt+1`; analyse again; user activates.
@@ -96,4 +96,6 @@ FastAPI is the only API. Next.js provides routing, layouts and the production se
 - Budget check in `LedgerService.reserve()` before enqueueing generation.
 
 ## Decisions requiring an ADR (see docs/adr/)
-0001 arq vs Celery · 0002 Next.js over Vite · 0003 text enums and uuid ids · 0004 SSE vs WebSockets · 0005 object storage vs DB blobs · 0006 sentence-level segmentation granularity · 0007 deployment platform
+Written: 0001 arq vs Celery · 0002 Next.js over Vite · 0003 text enums and uuid ids · 0004 pysbd for sentence segmentation
+
+Planned (numbered when written): SSE vs WebSockets · object storage vs DB blobs · sentence-level segmentation granularity · deployment platform

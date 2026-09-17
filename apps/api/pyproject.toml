@@ -14,6 +14,7 @@ dependencies = [
     "httpx",
     "pydantic-settings",
     "structlog",
+    "pysbd==0.3.4",
 ]
 
 [dependency-groups]
@@ -53,7 +54,8 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["T20"]
+# RUF001: tests deliberately contain curly quotes, dashes and ellipses as test data.
+"tests/**" = ["T20", "RUF001"]
 
 # ---------------------------------------------------------------- mypy
 [tool.mypy]
@@ -63,6 +65,10 @@ mypy_path = "src"
 packages = ["retake"]
 plugins = ["pydantic.mypy"]
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "pysbd"
+ignore_missing_imports = true  # pysbd ships no type hints (ADR-0004)
 
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]

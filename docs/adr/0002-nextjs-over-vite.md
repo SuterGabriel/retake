@@ -34,7 +34,7 @@ and SSE. Next.js API routes and Server Actions are not used: FastAPI stays the s
 - Bad: heavier toolchain (Next compiler, generated route types) than Vite for the same UI.
 - Open: `NEXT_PUBLIC_API_URL` is baked in at build time (Docker `ARG`). If one image must serve
   several environments, switch to relative `/api` paths behind a reverse proxy, or a runtime
-  `env.js` written at container start. Decide when deploying (ADR-0007).
+  `env.js` written at container start. Decide when deploying (deployment-platform ADR).
 
 ## Confirmation
 - `.claude/rules/frontend.md` forbids `route.ts` handlers and Server Actions; code review checks
