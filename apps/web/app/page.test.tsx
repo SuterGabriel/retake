@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import { App } from "./App";
+import HomePage from "./page";
 
-describe("App", () => {
+describe("HomePage", () => {
   it("renders the product name as the page heading", () => {
-    render(<App />);
+    render(<HomePage />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Retake");
   });
 });

@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart LR
-  B[Browser<br/>React + TS] -- REST / SSE --> A[FastAPI]
+  B[Browser<br/>React + TS (Next.js)] -- REST / SSE --> A[FastAPI]
   A --> P[(PostgreSQL)]
   A --> Q[(Redis<br/>arq queue)]
   W[arq worker] --> Q
@@ -74,7 +74,9 @@ GET    /takes/{id}/audio            (signed/proxied)
 ## Frontend layout
 
 ```
-apps/web/src/
+apps/web/
+├── app/                  Next.js App Router: layout.tsx, page.tsx, projects/[id]/review/page.tsx …
+│                         (review page is a Client Component; no route.ts, no Server Actions)
 ├── features/project/     import, project list
 ├── features/review/      split view, findings list, waveform, shortcuts, cost bar
 ├── features/export/
@@ -82,6 +84,8 @@ apps/web/src/
 ├── api/                  generated client from OpenAPI
 └── lib/                  pure TS helpers (keyboard map, formatting)
 ```
+
+FastAPI is the only API. Next.js provides routing, layouts and the production server; see ADR-0002.
 
 ## Cross-cutting
 
@@ -91,4 +95,4 @@ apps/web/src/
 - Budget check in `LedgerService.reserve()` before enqueueing generation.
 
 ## Decisions requiring an ADR (see docs/adr/)
-0001 arq vs Celery · 0002 SSE vs WebSockets · 0003 object storage vs DB blobs · 0004 sentence-level segmentation granularity · 0005 deployment platform
+0001 arq vs Celery · 0002 Next.js over Vite · 0003 SSE vs WebSockets · 0004 object storage vs DB blobs · 0005 sentence-level segmentation granularity · 0006 deployment platform

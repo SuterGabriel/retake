@@ -16,7 +16,7 @@ Then open Claude Code in the repo and paste the first prompt:
 
 Read CLAUDE.md, docs/PROJECT.md, docs/REQUIREMENTS.md, docs/ARCHITECTURE.md and docs/ROADMAP.md. Confirm in five sentences what we are building, what is out of scope, and what the learning contract requires of you.
 
-Then start Week 1, task 1: initialise `apps/api` with uv (Python 3.12, FastAPI, SQLAlchemy 2 async, asyncpg, Alembic, arq, httpx, pydantic-settings, structlog; dev: pytest, pytest-asyncio, respx, ruff, mypy strict) and `apps/web` with Vite + React 19 + TypeScript + Vitest + ESLint + Prettier. Before writing anything, explain the uv/pyproject model to me as a TypeScript developer and wait for my go.
+Then start Week 1, task 1: initialise `apps/api` with uv (Python 3.12, FastAPI, SQLAlchemy 2 async, asyncpg, Alembic, arq, httpx, pydantic-settings, structlog; dev: pytest, pytest-asyncio, respx, ruff, mypy strict) and `apps/web` with Next.js (App Router) + React 19 + TypeScript + Vitest + ESLint + Prettier. Before writing anything, explain the uv/pyproject model to me as a TypeScript developer and wait for my go.
 
 ---
 

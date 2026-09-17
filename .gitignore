@@ -8,6 +8,7 @@ __pycache__/
 htmlcov/
 node_modules/
 dist/
+.next/
 apps/web/playwright-report/
 *.mp3
 *.wav

@@ -28,7 +28,7 @@ repos:
     hooks:
       - id: prettier
         name: prettier
-        entry: bash -c 'cd apps/web && npx prettier --check "src/**/*.{ts,tsx,css}"'
+        entry: bash -c 'cd apps/web && npx prettier --check "app/**/*.{ts,tsx,css}"'
         language: system
         files: ^apps/web/
         pass_filenames: false

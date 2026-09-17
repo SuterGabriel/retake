@@ -1,4 +1,4 @@
-export function App() {
+export default function HomePage() {
   return (
     <main>
       <h1>Retake</h1>

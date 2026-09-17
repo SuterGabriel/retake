@@ -59,12 +59,12 @@ services:
 
   web:
     build: { context: ., dockerfile: apps/web/Dockerfile, target: dev }
-    command: npm run dev -- --host
-    volumes: [./apps/web:/app/apps/web, /app/apps/web/node_modules]
-    ports: ["${WEB_PORT:-5173}:5173"]
+    command: npm run dev
+    volumes: [./apps/web:/app/apps/web, /app/apps/web/node_modules, /app/apps/web/.next]
+    ports: ["${WEB_PORT:-3000}:3000"]
     environment:
-      VITE_API_URL: http://localhost:${API_PORT:-8000}
-      VITE_USE_POLLING: "true"
+      NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
+      WATCHPACK_POLLING: "true"  # bind mounts on Docker Desktop do not emit inotify events
 
 volumes:
   pgdata:

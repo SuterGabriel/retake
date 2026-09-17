@@ -8,7 +8,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 - [ ] Decide arq vs Celery (ADR-0001)
 
 ## Week 1 — Foundation
-- [ ] Monorepo scaffold, uv + pyproject, Vite app, compose (postgres, redis, minio), Makefile
+- [ ] Monorepo scaffold, uv + pyproject, Next.js app (App Router, TypeScript, Vitest, ESLint, Prettier), compose (postgres, redis, minio), Makefile
 - [ ] CLAUDE.md, rules, hooks, pre-commit (ruff, prettier, gitleaks), CI (backend + frontend jobs)
 - [ ] SQLAlchemy models + first Alembic migration for the five tables
 - [ ] `POST /projects`, `POST /projects/{id}/import` with `domain.segmentation` (TDD)
@@ -26,7 +26,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 - [ ] arq worker, `generate_take` job, concurrency limit, idempotent retries
 - [ ] SSE endpoint publishing progress from Redis
 - [ ] Worker integration tests against real Redis
-- [ ] ADR-0002 SSE vs WebSockets
+- [ ] ADR-0003 SSE vs WebSockets
 - Learn: arq, Redis pub/sub, idempotency keys, asyncio semantics vs Promises
 
 ## Week 4 — Detection
@@ -38,6 +38,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 
 ## Week 5 — Review UI, part 1
 - [ ] OpenAPI-generated API client (first frontend code that talks to the API), project import screen, segment list (virtualised)
+- [ ] Review page is a Client Component (`"use client"`): audio, keyboard and SSE need the browser
 - [ ] Waveform (wavesurfer.js) with finding markers
 - [ ] Playwright MCP set up; first smoke test
 - Learn: consuming SSE in React, virtualisation
@@ -55,7 +56,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 ## Week 8 — Export (known to be tight; spike ffmpeg in week 7 if time allows)
 - [ ] Spike: ffmpeg concat + acrossfade + loudnorm on two takes by hand; note sample-rate handling
 - [ ] Export job (subprocess via `asyncio.create_subprocess_exec`), download
-- [ ] ADR-0003 object storage, ADR-0005 deployment platform
+- [ ] ADR-0004 object storage, ADR-0006 deployment platform
 - Learn: subprocess handling, audio basics (LUFS, crossfade)
 
 ## Week 9 — Hardening & deploy

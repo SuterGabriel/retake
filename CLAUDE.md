@@ -11,7 +11,7 @@ and `docs/ROADMAP.md` before starting any task.
 
 ## Stack
 - Backend: Python 3.12, FastAPI, SQLAlchemy 2 (async), Alembic, arq + Redis, PostgreSQL
-- Frontend: React 19, TypeScript, Vite, TanStack Query, wavesurfer.js
+- Frontend: React 19, TypeScript, Next.js (App Router), TanStack Query, wavesurfer.js
 - Tooling: uv, ruff, mypy (strict), pytest, vitest, Docker Compose, GitHub Actions
 
 ## Commands

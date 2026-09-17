@@ -14,14 +14,14 @@ Long-form AI narration is ~90 % right on the first pass; the remaining 10 % is f
 
 ## Architecture
 
-FastAPI + arq worker + PostgreSQL + Redis + object storage on the backend, React/TypeScript on the front. One image, two processes. Details and diagram: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Decisions: [docs/adr/](docs/adr/).
+FastAPI + arq worker + PostgreSQL + Redis + object storage on the backend, Next.js (React/TypeScript) on the front. One image, two processes. Details and diagram: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Decisions: [docs/adr/](docs/adr/).
 
 ## Run locally
 
 ```bash
 cp .env.example .env        # add your ElevenLabs key
 make dev                    # docker compose up
-open http://localhost:5173  # web
+open http://localhost:3000  # web
 open http://localhost:8000/docs  # API
 ```
 
