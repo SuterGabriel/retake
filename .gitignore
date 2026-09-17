@@ -1,0 +1,16 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+node_modules/
+dist/
+apps/web/playwright-report/
+*.mp3
+*.wav
+!fixtures/**/*.wav
+.DS_Store
+fixtures/chapter-actual.txt

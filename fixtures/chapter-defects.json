@@ -1,0 +1,17 @@
+{
+  "$comment": "Deliberate edits applied to chapter-clean.txt to produce chapter-actual.txt (generated, not committed). Each defect is located by `anchor`: a short unique phrase from the target sentence. Anchors survive changes to the segmentation rules; sentence indices would not. Fill in to 20 entries once the fixture text exists.",
+  "schema": {
+    "omission":     { "anchor": "phrase in target sentence", "remove_words": ["word", "..."] },
+    "repetition":   { "anchor": "phrase in target sentence", "repeat_word": "word", "times": 2 },
+    "substitution": { "anchor": "phrase in target sentence", "replace": { "from": "to" } },
+    "truncation":   { "anchor": "phrase in target sentence", "keep_first_words": 4 }
+  },
+  "defects": [
+    { "id": 1, "type": "omission",     "anchor": "REPLACE with unique phrase", "remove_words": ["quietly"] },
+    { "id": 2, "type": "omission",     "anchor": "REPLACE with unique phrase", "remove_words": ["not"] },
+    { "id": 3, "type": "repetition",   "anchor": "REPLACE with unique phrase", "repeat_word": "the", "times": 2 },
+    { "id": 4, "type": "substitution", "anchor": "REPLACE with unique phrase", "replace": { "Watson": "Watsen" } },
+    { "id": 5, "type": "truncation",   "anchor": "REPLACE with unique phrase", "keep_first_words": 4 }
+  ],
+  "targets": { "omission": 8, "repetition": 5, "substitution": 5, "truncation": 2 }
+}

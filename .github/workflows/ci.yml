@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: retake, POSTGRES_PASSWORD: retake, POSTGRES_DB: retake_test }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    defaults: { run: { working-directory: apps/api } }
+    env:
+      DATABASE_URL: postgresql+asyncpg://retake:retake@localhost:5432/retake_test
+      REDIS_URL: redis://localhost:6379/0
+      ENVIRONMENT: test
+      ELEVENLABS_API_KEY: test-not-a-real-key
+      ELEVENLABS_MONTHLY_BUDGET: "1000"
+      OBJECT_STORE_ENDPOINT: http://localhost:9000
+      OBJECT_STORE_BUCKET: retake-test
+      OBJECT_STORE_ACCESS_KEY: test
+      OBJECT_STORE_SECRET_KEY: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12", enable-cache: true }
+      - run: uv sync --locked
+      - run: uv run ruff format --check .
+      - run: uv run ruff check --output-format=github .
+      - run: uv run mypy src
+      - run: |
+          if [ -d alembic/versions ]; then uv run alembic upgrade head
+          else echo 'no migrations yet (enable in week 1, task 3)'; fi
+      - run: uv run pytest --cov=retake --cov-report=term-missing
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - run: npm ci
+      - run: npx prettier --check "src/**/*.{ts,tsx,css}"
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test -- --run
+      - run: npm run build
+
+  # docker job: add in week 2 once Dockerfiles exist
