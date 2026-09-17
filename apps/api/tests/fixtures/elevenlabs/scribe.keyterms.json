@@ -1,0 +1,198 @@
+{
+  "language_code": "eng",
+  "language_probability": 1.0,
+  "text": "Chapter one. Dr. Zyphora arrived at 7:30 PM and said, \"Nobody knows my name.\"",
+  "words": [
+    {
+      "text": "Chapter",
+      "start": 0.12,
+      "end": 0.42,
+      "type": "word",
+      "logprob": -1.7881233361549675e-05
+    },
+    {
+      "text": " ",
+      "start": 0.42,
+      "end": 0.52,
+      "type": "spacing",
+      "logprob": -0.057825542986392975
+    },
+    {
+      "text": "one.",
+      "start": 0.52,
+      "end": 0.74,
+      "type": "word",
+      "logprob": -0.0716820377856493
+    },
+    {
+      "text": " ",
+      "start": 0.74,
+      "end": 0.74,
+      "type": "spacing",
+      "logprob": -0.0007104733376763761
+    },
+    {
+      "text": "Dr.",
+      "start": 1.2,
+      "end": 1.28,
+      "type": "word",
+      "logprob": -0.0004832252337412986
+    },
+    {
+      "text": " ",
+      "start": 1.28,
+      "end": 1.54,
+      "type": "spacing",
+      "logprob": -0.0007840896723791957
+    },
+    {
+      "text": "Zyphora",
+      "start": 1.54,
+      "end": 2.0,
+      "type": "word",
+      "logprob": -0.00023454993190950648
+    },
+    {
+      "text": " ",
+      "start": 2.0,
+      "end": 2.06,
+      "type": "spacing",
+      "logprob": -9.536738616588991e-07
+    },
+    {
+      "text": "arrived",
+      "start": 2.06,
+      "end": 2.42,
+      "type": "word",
+      "logprob": -9.536738616588991e-07
+    },
+    {
+      "text": " ",
+      "start": 2.42,
+      "end": 2.44,
+      "type": "spacing",
+      "logprob": 0.0
+    },
+    {
+      "text": "at",
+      "start": 2.44,
+      "end": 2.56,
+      "type": "word",
+      "logprob": 0.0
+    },
+    {
+      "text": " ",
+      "start": 2.56,
+      "end": 2.84,
+      "type": "spacing",
+      "logprob": -0.0006270825979299843
+    },
+    {
+      "text": "7:30",
+      "start": 2.84,
+      "end": 3.18,
+      "type": "word",
+      "logprob": -2.5241605484893626e-05
+    },
+    {
+      "text": " ",
+      "start": 3.18,
+      "end": 3.22,
+      "type": "spacing",
+      "logprob": -0.000916537712328136
+    },
+    {
+      "text": "PM",
+      "start": 3.24,
+      "end": 3.56,
+      "type": "word",
+      "logprob": -0.000916537712328136
+    },
+    {
+      "text": " ",
+      "start": 3.56,
+      "end": 3.6,
+      "type": "spacing",
+      "logprob": -6.437280717364047e-06
+    },
+    {
+      "text": "and",
+      "start": 3.6,
+      "end": 3.66,
+      "type": "word",
+      "logprob": -6.437280717364047e-06
+    },
+    {
+      "text": " ",
+      "start": 3.66,
+      "end": 3.78,
+      "type": "spacing",
+      "logprob": -1.1920928244535389e-07
+    },
+    {
+      "text": "said,",
+      "start": 3.78,
+      "end": 4.0,
+      "type": "word",
+      "logprob": -1.811973919529919e-06
+    },
+    {
+      "text": " ",
+      "start": 4.0,
+      "end": 4.24,
+      "type": "spacing",
+      "logprob": -7.939023635117337e-05
+    },
+    {
+      "text": "\"Nobody",
+      "start": 4.24,
+      "end": 4.54,
+      "type": "word",
+      "logprob": -0.00010411532899265044
+    },
+    {
+      "text": " ",
+      "start": 4.54,
+      "end": 4.6,
+      "type": "spacing",
+      "logprob": -1.3351351299206726e-05
+    },
+    {
+      "text": "knows",
+      "start": 4.6,
+      "end": 4.82,
+      "type": "word",
+      "logprob": -1.3351351299206726e-05
+    },
+    {
+      "text": " ",
+      "start": 4.82,
+      "end": 4.86,
+      "type": "spacing",
+      "logprob": -2.3841855067985307e-07
+    },
+    {
+      "text": "my",
+      "start": 4.86,
+      "end": 4.98,
+      "type": "word",
+      "logprob": -2.3841855067985307e-07
+    },
+    {
+      "text": " ",
+      "start": 4.98,
+      "end": 5.02,
+      "type": "spacing",
+      "logprob": 0.0
+    },
+    {
+      "text": "name.\"",
+      "start": 5.02,
+      "end": 5.32,
+      "type": "word",
+      "logprob": -0.002683852488795916
+    }
+  ],
+  "transcription_id": "m6EyNRAxgj4ghlur53A5",
+  "audio_duration_secs": 5.61925
+}

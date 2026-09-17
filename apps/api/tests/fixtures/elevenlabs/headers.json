@@ -1,0 +1,19 @@
+{
+  "tts-with-timestamps.v2": {
+    "character-cost": "79",
+    "content-type": "application/json"
+  },
+  "tts-with-timestamps.v3": {
+    "character-cost": "79",
+    "content-type": "application/json"
+  },
+  "scribe.plain": {
+    "character-cost": "6",
+    "content-type": "application/json"
+  },
+  "scribe.keyterms": {
+    "character-cost": "7",
+    "content-type": "application/json"
+  },
+  "_note": "request-id and x-trace-id were present on every response and are omitted here."
+}
