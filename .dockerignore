@@ -1,0 +1,17 @@
+# Keep the build context small: everything here never reaches the image.
+.git
+.env
+.env.*
+!.env.example
+**/.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/htmlcov
+**/playwright-report
+docs
+fixtures
+*.md

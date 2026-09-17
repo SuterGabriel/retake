@@ -5,7 +5,7 @@ services:
       POSTGRES_USER: retake
       POSTGRES_PASSWORD: retake
       POSTGRES_DB: retake
-    ports: ["5432:5432"]
+    ports: ["${POSTGRES_PORT:-5432}:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U retake"]
@@ -14,38 +14,39 @@ services:
 
   redis:
     image: redis:7
-    ports: ["6379:6379"]
+    ports: ["${REDIS_PORT:-6379}:6379"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 10
 
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio  # Docker Hub `minio/minio` is no longer published
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio12345
-    ports: ["9000:9000", "9001:9001"]
+    ports: ["${MINIO_PORT:-9000}:9000", "${MINIO_CONSOLE_PORT:-9001}:9001"]
     volumes: [miniodata:/data]
 
   api:
     build: { context: ., dockerfile: apps/api/Dockerfile }
-    command: uv run uvicorn retake.api.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn retake.api.main:app --host 0.0.0.0 --port 8000 --reload
     env_file: .env
     environment:
       DATABASE_URL: postgresql+asyncpg://retake:retake@postgres:5432/retake
       REDIS_URL: redis://redis:6379/0
       OBJECT_STORE_ENDPOINT: http://minio:9000
+      WATCHFILES_FORCE_POLLING: "true"  # bind mounts on Docker Desktop do not emit inotify events
     volumes: [./apps/api:/app/apps/api]
-    ports: ["8000:8000"]
+    ports: ["${API_PORT:-8000}:8000"]
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
 
   worker:
     build: { context: ., dockerfile: apps/api/Dockerfile }
-    command: uv run arq retake.jobs.worker.WorkerSettings
+    command: arq retake.jobs.worker.WorkerSettings
     env_file: .env
     environment:
       DATABASE_URL: postgresql+asyncpg://retake:retake@postgres:5432/retake
@@ -57,12 +58,13 @@ services:
       redis: { condition: service_healthy }
 
   web:
-    build: { context: ., dockerfile: apps/web/Dockerfile }
+    build: { context: ., dockerfile: apps/web/Dockerfile, target: dev }
     command: npm run dev -- --host
     volumes: [./apps/web:/app/apps/web, /app/apps/web/node_modules]
-    ports: ["5173:5173"]
+    ports: ["${WEB_PORT:-5173}:5173"]
     environment:
-      VITE_API_URL: http://localhost:8000
+      VITE_API_URL: http://localhost:${API_PORT:-8000}
+      VITE_USE_POLLING: "true"
 
 volumes:
   pgdata:
