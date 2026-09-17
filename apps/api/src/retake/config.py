@@ -39,10 +39,16 @@ class Settings(BaseSettings):
     # SecretStr: repr/str print '**********', so the key cannot leak via a log line
     # or an error message. Hard rule 1 in CLAUDE.md.
     elevenlabs_api_key: SecretStr
+    elevenlabs_base_url: str = "https://api.elevenlabs.io"
     elevenlabs_default_voice_id: str = "replace-me"
     elevenlabs_default_model_id: str = "eleven_multilingual_v2"
     # Credits are integers (hard rule 7).
     elevenlabs_monthly_budget: PositiveInt = Field(default=50_000)
+    # Adapter retry policy (docs/ELEVENLABS.md, impact point 11). Attempts count real requests;
+    # `concurrent_limit_exceeded` waits are bounded separately so a busy plan never blocks forever.
+    elevenlabs_max_attempts: PositiveInt = Field(default=3)
+    elevenlabs_max_concurrency_waits: PositiveInt = Field(default=10)
+    elevenlabs_read_timeout_s: PositiveInt = Field(default=60)  # synthesis takes seconds
 
     generation_concurrency: PositiveInt = Field(default=3)
 

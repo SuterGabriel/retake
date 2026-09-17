@@ -13,5 +13,5 @@ adapter (week 2) and the detection pipeline (week 4). Never call the paid API in
 | `error.402-paid-plan-required.json` | error body shape (`detail.code`), library voice on Free |
 | `headers.json` | `character-cost` values seen per response |
 
-Request ids and trace ids were removed. The input text was:
+Request ids, trace ids and `transcription_id` were removed. The input text was:
 `Chapter one. Dr. Zyphora arrived at 7:30 p.m. and said, "Nobody knows my name."`
