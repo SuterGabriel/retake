@@ -3,7 +3,7 @@
 ## MVP scope (v1.0) — must have
 
 ### Import
-- R1. Upload a TXT or Markdown chapter (max 50k characters).
+- R1. Submit chapter text (TXT/Markdown content) as a JSON body; the frontend reads the file. Max 50k characters.
 - R2. Split into sentences; each sentence becomes a `Segment` with a stable position.
 - R3. Preserve paragraph boundaries for later pause handling.
 

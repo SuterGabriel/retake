@@ -3,9 +3,13 @@
 from fastapi import FastAPI
 
 from retake import __version__
+from retake.api.errors import register_error_handlers
+from retake.api.routers import projects
 from retake.config import get_settings
 
 app = FastAPI(title="Retake", version=__version__)
+register_error_handlers(app)
+app.include_router(projects.router)
 
 
 @app.get("/health")

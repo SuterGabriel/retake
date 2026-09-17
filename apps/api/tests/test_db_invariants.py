@@ -5,33 +5,15 @@ Every test runs inside a transaction that is rolled back, so no state is left be
 """
 
 import uuid
-from collections.abc import AsyncIterator
 
 import pytest
 from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from retake.config import get_settings
 from retake.db.models import LedgerEntry, LedgerKind, Project, Segment, Take, TakeStatus
 
-
-@pytest.fixture
-async def session() -> AsyncIterator[AsyncSession]:
-    """One connection, one outer transaction, rolled back at the end.
-
-    `join_transaction_mode="create_savepoint"` turns every commit() or rollback() inside the
-    test into a SAVEPOINT operation, so a test can provoke an IntegrityError and keep going.
-    """
-    engine = create_async_engine(get_settings().database_url)
-    async with engine.connect() as conn:
-        outer = await conn.begin()
-        async with AsyncSession(
-            bind=conn, join_transaction_mode="create_savepoint", expire_on_commit=False
-        ) as s:
-            yield s
-        await outer.rollback()
-    await engine.dispose()
+# The `session` fixture (savepoint per test) lives in tests/conftest.py.
 
 
 def _project() -> Project:
