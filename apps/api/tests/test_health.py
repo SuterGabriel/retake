@@ -19,7 +19,7 @@ async def test_api_key_never_appears_in_health_response(client: AsyncClient) -> 
 
 
 def test_settings_do_not_print_the_api_key() -> None:
-    settings = Settings(elevenlabs_api_key="super-secret")  # type: ignore[arg-type]
+    settings = Settings(elevenlabs_api_key="super-secret")
 
     assert "super-secret" not in repr(settings)
     assert "super-secret" not in str(settings)

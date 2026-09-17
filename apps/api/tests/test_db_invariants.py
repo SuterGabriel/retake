@@ -99,10 +99,16 @@ async def test_deleting_a_take_keeps_its_ledger_entry(session: AsyncSession) -> 
     await session.flush()
 
     await session.execute(delete(Take).where(Take.id == take.id))  # DB-level, bypasses the ORM
-    await session.refresh(entry)
 
-    assert entry.take_id is None
-    assert entry.credits == 7
+    # Re-read from the database rather than the narrowed `entry.take_id` (mypy knows we just
+    # assigned a UUID to it and would treat `is None` as unreachable).
+    row = (
+        await session.execute(
+            select(LedgerEntry.take_id, LedgerEntry.credits).where(LedgerEntry.id == entry.id)
+        )
+    ).one()
+    assert row.take_id is None
+    assert row.credits == 7
 
 
 async def test_deleting_a_project_cascades_to_segments(session: AsyncSession) -> None:

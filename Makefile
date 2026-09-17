@@ -15,7 +15,7 @@ web-test:
 	cd apps/web && npm test -- --run
 
 lint:
-	cd apps/api && uv run ruff format --check . && uv run ruff check . && uv run mypy src
+	cd apps/api && uv run ruff format --check . && uv run ruff check . && uv run mypy src tests
 	cd apps/web && npm run lint && npm run typecheck
 
 migrate:

@@ -43,7 +43,7 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff format --check .
       - run: uv run ruff check --output-format=github .
-      - run: uv run mypy src
+      - run: uv run mypy src tests
       - run: |
           if [ -d alembic/versions ]; then uv run alembic upgrade head
           else echo 'no migrations yet (enable in week 1, task 3)'; fi

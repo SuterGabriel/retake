@@ -9,7 +9,7 @@ def test_pool_size_must_cover_generation_concurrency() -> None:
         ValidationError, match="GENERATION_CONCURRENCY=6 exceeds DATABASE_POOL_SIZE=5"
     ):
         Settings(
-            elevenlabs_api_key="k",  # type: ignore[arg-type]
+            elevenlabs_api_key="k",
             generation_concurrency=6,
             database_pool_size=5,
         )
@@ -17,7 +17,7 @@ def test_pool_size_must_cover_generation_concurrency() -> None:
 
 def test_pool_size_equal_to_concurrency_is_allowed() -> None:
     settings = Settings(
-        elevenlabs_api_key="k",  # type: ignore[arg-type]
+        elevenlabs_api_key="k",
         generation_concurrency=5,
         database_pool_size=5,
     )

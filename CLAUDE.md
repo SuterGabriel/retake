@@ -19,7 +19,7 @@ and `docs/ROADMAP.md` before starting any task.
 - `make test` – backend + frontend tests
 - `make lint` – ruff, mypy, eslint, tsc
 - `make migrate` – alembic upgrade head
-- Backend only: `cd apps/api && uv run pytest` / `uv run ruff check .` / `uv run mypy src`
+- Backend only: `cd apps/api && uv run pytest` / `uv run ruff check .` / `uv run mypy src tests`
 - Frontend only: `cd apps/web && npm test` / `npm run lint`
 
 ## Hard rules
