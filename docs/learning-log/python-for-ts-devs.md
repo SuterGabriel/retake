@@ -56,3 +56,37 @@ like `node dist/main.js` without devDependencies. Each layer is cached independe
 then never repeats the dependency install. Same pattern as `COPY package*.json` + `npm ci` before
 `COPY .`. In dev, compose bind-mounts `./apps/api` over the image so `--reload` sees edits; the
 image provides the environment, the mount provides the code.
+
+### The savepoint pattern in database tests (week 1, task 3)
+
+`tests/test_db_invariants.py::session` opens one connection, starts an outer transaction that
+is never committed, and hands the test a session that works inside it. With
+`join_transaction_mode="create_savepoint"` the session does its work on a SAVEPOINT (a
+transaction inside the transaction). When a `flush()` fails with `IntegrityError`, Postgres marks
+the running transaction as aborted and ignores every further statement until a rollback. Without
+a savepoint that would poison the outer transaction; with one, the session rolls back to the
+savepoint and the outer transaction stays usable. `outer.rollback()` at the end discards
+everything the test wrote, so tests leave no state behind and need no cleanup code.
+
+| Python | TypeScript | Notes |
+|---|---|---|
+| `@pytest.fixture` with `yield` | `beforeEach` + `afterEach` in one function | code before `yield` is setup, after it teardown; teardown runs even if the test fails |
+| `async with engine.connect() as conn` | `await using conn = ...` (TS 5.2) or `try/finally` + `release()` | context managers are built-in `try/finally` |
+| `outer = await conn.begin()`, never committed | Prisma `$transaction(async tx => { ...; throw })` to discard | Prisma forces the callback; SQLAlchemy lets you hold the transaction |
+| `join_transaction_mode="create_savepoint"` | Knex `trx.savepoint()`; Prisma has none | **analogy breaks**: Prisma has no nested transactions |
+| `AsyncIterator[AsyncSession]` return type | `AsyncGenerator<AsyncSession>` | the fixture is a generator pytest drives exactly once |
+| `with pytest.raises(IntegrityError, match="ux_...")` | `await expect(fn()).rejects.toThrow(/ux_.../)` | `match` is a regex on the message |
+
+**Surprises for TS developers**
+1. A failed statement poisons the whole Postgres transaction ("current transaction is aborted,
+   commands ignored until end of transaction block"). "Catch and carry on" does not exist here;
+   savepoints are the only answer. This is database behaviour, not a language feature.
+2. `session.add()` never talks to the database. The `IntegrityError` appears at `flush()`, when
+   the SQL is sent. In Prisma the error appears at the `await` of `create()`. Wrapping
+   `pytest.raises` around `add_all` instead of `flush` gives a green test that checks nothing.
+3. `yield` inside a fixture is not an iterator for you: same keyword as a generator function, but
+   pytest drives it, once for setup and once for teardown.
+
+**Question to answer without notes:** why does `await session.flush()` raise the
+`IntegrityError` rather than `session.add_all(...)`, and what would happen to the
+`outer.rollback()` at the end if the fixture used no savepoint?
