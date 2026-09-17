@@ -5,14 +5,14 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 ## Week 0 — Before code (this weekend)
 - [ ] Verify every **VERIFY** item in docs/ELEVENLABS.md against current docs; record answers there
 - [ ] Create `fixtures/chapter-clean.txt` (public domain) and `fixtures/chapter-defects.json`
-- [ ] Decide arq vs Celery (ADR-0001)
+- [x] Decide arq vs Celery (ADR-0001)
 
 ## Week 1 — Foundation
 - [ ] Monorepo scaffold, uv + pyproject, Next.js app (App Router, TypeScript, Vitest, ESLint, Prettier), compose (postgres, redis, minio), Makefile
 - [ ] CLAUDE.md, rules, hooks, pre-commit (ruff, prettier, gitleaks), CI (backend + frontend jobs)
 - [ ] SQLAlchemy models + first Alembic migration for the five tables
 - [ ] `POST /projects`, `POST /projects/{id}/import` with `domain.segmentation` (TDD)
-- [ ] ADR-0001 arq vs Celery
+- [x] ADR-0001 arq vs Celery
 - Learn: uv, pyproject, Pydantic vs dataclass, async sessions, Alembic
 
 ## Week 2 — First audio
