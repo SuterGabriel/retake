@@ -16,6 +16,10 @@ class ErrorCode(StrEnum):
     BUDGET_EXCEEDED = "budget_exceeded"
     LEDGER_ENTRY_NOT_FOUND = "ledger_entry_not_found"
     LEDGER_LOCKED = "ledger_locked"
+    SEGMENT_NOT_FOUND = "segment_not_found"
+    ATTEMPT_ALREADY_IN_FLIGHT = "attempt_already_in_flight"
+    TAKE_NOT_FOUND = "take_not_found"
+    TAKE_HAS_NO_AUDIO = "take_has_no_audio"
 
 
 class ServiceError(Exception):
@@ -60,3 +64,25 @@ class LedgerLocked(ServiceError):
     """The budget row lock could not be taken in time; the caller may retry later."""
 
     code = ErrorCode.LEDGER_LOCKED
+
+
+class SegmentNotFound(ServiceError):
+    code = ErrorCode.SEGMENT_NOT_FOUND
+
+
+class AttemptAlreadyInFlight(ServiceError):
+    """This (segment, version, attempt) already has a ledger entry that is not settled with a
+    take: pending (a run died mid-call, maybe billed), failed or possibly_billed. An attempt is
+    a fact, not a retry slot; the caller must use the next attempt number."""
+
+    code = ErrorCode.ATTEMPT_ALREADY_IN_FLIGHT
+
+
+class TakeNotFound(ServiceError):
+    code = ErrorCode.TAKE_NOT_FOUND
+
+
+class TakeHasNoAudio(ServiceError):
+    """The take exists but never produced audio (failed, or still generating)."""
+
+    code = ErrorCode.TAKE_HAS_NO_AUDIO

@@ -178,6 +178,59 @@ class LedgerService:
         )
         return Reservation(entry, created=True)
 
+    async def record_free(
+        self,
+        *,
+        project_id: uuid.UUID,
+        kind: LedgerKind,
+        segment_id: uuid.UUID,
+        segment_version: int,
+        attempt: int,
+        estimated_credits: int,
+        take_id: uuid.UUID | None,
+    ) -> LedgerEntry:
+        """Book an outcome that cost nothing (a cache hit): status done, credits 0.
+
+        No budget check and no period lock, because zero credits can neither exceed nor race
+        anything; a cache hit must never fail with "budget exceeded". `estimated_credits` is
+        what the call would have cost, kept so the saving is visible in the ledger.
+        Idempotent on the same key like `reserve()`: a duplicate returns the existing row.
+        """
+        estimate = _require_int(estimated_credits, "estimated_credits")
+        key = self.idempotency_key(kind, segment_id, segment_version, attempt)
+        period = self.current_period()
+
+        existing = await self._session.scalar(
+            select(LedgerEntry).where(LedgerEntry.idempotency_key == key)
+        )
+        if existing is not None:
+            await self._session.commit()
+            log.info("ledger.record_free.duplicate", key=key, status=existing.status.value)
+            return existing
+
+        await self._ensure_period(period)
+        entry = LedgerEntry(
+            project_id=project_id,
+            take_id=take_id,
+            kind=kind,
+            period=period,
+            status=LedgerStatus.DONE,
+            estimated_credits=estimate,
+            credits=0,
+            idempotency_key=key,
+        )
+        self._session.add(entry)
+        await self._session.commit()
+        log.info(
+            "ledger.record_free",
+            key=key,
+            kind=kind.value,
+            period=period,
+            estimated=estimate,
+            project_id=str(project_id),
+        )
+        return entry
+
     async def _ensure_period(self, period: str) -> None:
         """Create the period row if missing. ON CONFLICT makes a concurrent first access safe."""
         stmt = (

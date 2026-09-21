@@ -56,7 +56,12 @@ def _segment(project: Project, position: int = 0) -> Segment:
 
 def _take(segment: Segment, *, attempt: int, status: TakeStatus, active: bool) -> Take:
     return Take(
-        segment=segment, segment_version=1, attempt=attempt, status=status, is_active=active
+        segment=segment,
+        segment_version=1,
+        attempt=attempt,
+        status=status,
+        is_active=active,
+        content_hash="0" * 64,
     )
 
 

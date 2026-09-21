@@ -23,7 +23,7 @@ import asyncio
 import uuid
 from collections.abc import AsyncIterator, Callable
 from datetime import UTC, datetime
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import pytest
 from sqlalchemy import delete, func, select
@@ -76,7 +76,13 @@ async def make_take(session: AsyncSession, project: Project) -> Take:
     segment = Segment(
         project=project, position=0, paragraph_index=0, text="One.", normalized_text="one"
     )
-    take = Take(segment=segment, segment_version=1, attempt=1, status=TakeStatus.PENDING)
+    take = Take(
+        segment=segment,
+        segment_version=1,
+        attempt=1,
+        status=TakeStatus.PENDING,
+        content_hash="0" * 64,
+    )
     session.add_all([segment, take])
     await session.flush()
     return take
@@ -615,3 +621,77 @@ async def test_budget_exceeded_does_not_keep_the_period_locked(
         )
         assert row.scalar_one().period == TEST_PERIOD
         await b.rollback()
+
+
+# ---------------------------------------------------------------- record_free (cache hits)
+
+
+async def test_record_free_writes_a_done_entry_without_touching_the_budget(
+    session: AsyncSession,
+) -> None:
+    """A cache hit costs nothing, so it must never be refused by the budget: the budget here
+    is smaller than the estimate on purpose. The estimate is still recorded so the saving
+    stays visible ("this is what it would have cost")."""
+    project = await make_project(session)
+    take = await make_take(session, project)
+    service = LedgerService(session, settings_with_budget(5), now=clock(NOW))
+
+    entry = await service.record_free(
+        project_id=project.id,
+        kind=LedgerKind.CACHE_HIT,
+        segment_id=take.segment_id,
+        segment_version=1,
+        attempt=2,
+        estimated_credits=79,
+        take_id=take.id,
+    )
+
+    stored = await session.get(LedgerEntry, entry.id)
+    assert stored is not None
+    assert stored.status == LedgerStatus.DONE
+    assert stored.kind == LedgerKind.CACHE_HIT
+    assert stored.credits == 0
+    assert stored.estimated_credits == 79
+    assert stored.take_id == take.id
+    assert stored.period == "2099-01"
+    assert stored.idempotency_key == f"cache_hit:{take.segment_id}:1:2"
+    assert await service.spent(period="2099-01") == 0
+
+
+async def test_record_free_twice_with_same_key_returns_the_existing_entry(
+    session: AsyncSession,
+) -> None:
+    project = await make_project(session)
+    take = await make_take(session, project)
+    service = LedgerService(session, settings_with_budget(1000), now=clock(NOW))
+    args: dict[str, Any] = dict(
+        project_id=project.id,
+        kind=LedgerKind.CACHE_HIT,
+        segment_id=take.segment_id,
+        segment_version=1,
+        attempt=1,
+        estimated_credits=10,
+        take_id=take.id,
+    )
+
+    first = await service.record_free(**args)
+    second = await service.record_free(**args)
+
+    assert second.id == first.id
+    assert await count_entries(session, project.id) == 1
+
+
+async def test_record_free_rejects_non_integer_estimates(session: AsyncSession) -> None:
+    project = await make_project(session)
+    service = LedgerService(session, settings_with_budget(1000), now=clock(NOW))
+
+    with pytest.raises(TypeError):
+        await service.record_free(
+            project_id=project.id,
+            kind=LedgerKind.CACHE_HIT,
+            segment_id=uuid.uuid4(),
+            segment_version=1,
+            attempt=1,
+            estimated_credits=7.5,  # type: ignore[arg-type]
+            take_id=None,
+        )

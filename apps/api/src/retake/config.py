@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     object_store_bucket: str = "retake"
     object_store_access_key: str = "minio"
     object_store_secret_key: SecretStr = SecretStr("minio12345")
+    # v1 audio store: a directory, relative to the process working directory (apps/api in dev,
+    # /app in the container). The object store above takes over in week 8.
+    audio_store_path: Path = Path("./data/audio")
 
     # SecretStr: repr/str print '**********', so the key cannot leak via a log line
     # or an error message. Hard rule 1 in CLAUDE.md.

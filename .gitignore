@@ -15,3 +15,6 @@ apps/web/playwright-report/
 !fixtures/**/*.wav
 .DS_Store
 fixtures/chapter-actual.txt
+
+# generated audio (LocalAudioStore, AUDIO_STORE_PATH)
+data/

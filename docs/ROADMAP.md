@@ -3,22 +3,22 @@
 Rule: every week ends with something runnable and a learning-log entry. Narrow and finished beats broad and half-done.
 
 ## Week 0 — Before code (this weekend)
-- [ ] Verify every **VERIFY** item in docs/ELEVENLABS.md against current docs; record answers there
-- [ ] Create `fixtures/chapter-clean.txt` (public domain) and `fixtures/chapter-defects.json`
+- [x] Verify every **VERIFY** item in docs/ELEVENLABS.md against current docs; record answers there
+- [x] Create `fixtures/chapter-clean.txt` (public domain) and `fixtures/chapter-defects.json`
 - [x] Decide arq vs Celery (ADR-0001)
 
 ## Week 1 — Foundation
-- [ ] Monorepo scaffold, uv + pyproject, Next.js app (App Router, TypeScript, Vitest, ESLint, Prettier), compose (postgres, redis, minio), Makefile
-- [ ] CLAUDE.md, rules, hooks, pre-commit (ruff, prettier, gitleaks), CI (backend + frontend jobs)
-- [ ] SQLAlchemy models + first Alembic migration for the five tables
-- [ ] `POST /projects`, `POST /projects/{id}/import` with `domain.segmentation` (TDD)
+- [x] Monorepo scaffold, uv + pyproject, Next.js app (App Router, TypeScript, Vitest, ESLint, Prettier), compose (postgres, redis, minio), Makefile
+- [x] CLAUDE.md, rules, hooks, pre-commit (ruff, prettier, gitleaks), CI (backend + frontend jobs)
+- [x] SQLAlchemy models + first Alembic migration for the five tables
+- [x] `POST /projects`, `POST /projects/{id}/import` with `domain.segmentation` (TDD)
 - [x] ADR-0001 arq vs Celery
 - Learn: uv, pyproject, Pydantic vs dataclass, async sessions, Alembic
 
 ## Week 2 — First audio
-- [ ] ElevenLabs adapter (`tts.py`) with retries, timeouts, respx contract tests
-- [ ] `LedgerService` with idempotency (TDD) and budget check
-- [ ] One synchronous endpoint that generates a single segment (no queue yet) — first real audio
+- [x] ElevenLabs adapter (`tts.py`) with retries, timeouts, respx contract tests
+- [x] `LedgerService` with idempotency (TDD) and budget check
+- [x] One synchronous endpoint that generates a single segment (no queue yet) — first real audio
 - [ ] Docker CI job; branch ruleset
 - Learn: httpx, context managers, exceptions with context, integer money
 

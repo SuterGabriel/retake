@@ -87,6 +87,7 @@ class LedgerKind(StrEnum):
     TTS = "tts"
     STT = "stt"
     RETRY_SKIPPED = "retry_skipped"
+    CACHE_HIT = "cache_hit"  # audio reused from an equal take: credits 0, estimate kept
 
 
 class LedgerStatus(StrEnum):
@@ -182,6 +183,9 @@ class Take(Base):
         server_default=TakeStatus.PENDING.value,
     )
     audio_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # domain.cache_key.content_hash of (text, voice, model, settings, context). Equal hashes
+    # mean interchangeable audio; the generation service looks it up before calling the API.
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     # ElevenLabs `request-id` header of the generation, for support and reconciliation.
     request_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)

@@ -18,6 +18,11 @@ STATUS_BY_CODE: dict[ErrorCode, int] = {
     ErrorCode.BUDGET_EXCEEDED: status.HTTP_402_PAYMENT_REQUIRED,
     ErrorCode.LEDGER_ENTRY_NOT_FOUND: status.HTTP_404_NOT_FOUND,
     ErrorCode.LEDGER_LOCKED: status.HTTP_503_SERVICE_UNAVAILABLE,
+    ErrorCode.SEGMENT_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+    ErrorCode.ATTEMPT_ALREADY_IN_FLIGHT: status.HTTP_409_CONFLICT,
+    ErrorCode.TAKE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+    # 404, not 409: from the client's point of view the audio resource does not exist.
+    ErrorCode.TAKE_HAS_NO_AUDIO: status.HTTP_404_NOT_FOUND,
 }
 
 
