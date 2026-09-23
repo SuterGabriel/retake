@@ -19,7 +19,7 @@ Rule: every week ends with something runnable and a learning-log entry. Narrow a
 - [x] ElevenLabs adapter (`tts.py`) with retries, timeouts, respx contract tests
 - [x] `LedgerService` with idempotency (TDD) and budget check
 - [x] One synchronous endpoint that generates a single segment (no queue yet) — first real audio
-- [ ] Docker CI job; branch ruleset
+- [x] Docker CI job (both images build in CI); branch ruleset set in GitHub by hand
 - Learn: httpx, context managers, exceptions with context, integer money
 
 ## Week 3 — Queue

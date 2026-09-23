@@ -63,4 +63,26 @@ jobs:
       - run: npm test -- --run
       - run: npm run build
 
-  # docker job: add in week 2 once Dockerfiles exist
+  docker:
+    # Proves both images build from a clean checkout. No push: the registry and the
+    # deployment platform are week 9 (ADR pending). Build context is the repo root, as in
+    # compose.yml. `runner` is the production target of the web image; compose uses `dev`.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,scope=api,mode=max
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          target: runner
+          push: false
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max

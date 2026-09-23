@@ -6,3 +6,4 @@
 | 0002 | Next.js (App Router) instead of Vite + React for the front end | Accepted |
 | 0003 | Enums as text with CHECK constraints, ids as uuid4 | Accepted |
 | 0004 | pysbd for sentence segmentation | Accepted |
+| 0005 | Take cache keyed by content_hash | Proposed |
