@@ -23,7 +23,9 @@ ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_TELEMETRY_DISABLED=1
 COPY apps/web/ ./
-RUN npm run build
+# public/ is empty today and git does not track empty folders, so a clean checkout has
+# none; the runner stage copies it, so make sure it exists.
+RUN mkdir -p public && npm run build
 
 # ---------------------------------------------------------------- stage 3: runner
 FROM node:22-alpine AS runner
